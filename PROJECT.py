@@ -169,10 +169,18 @@ with left:
     # API Key
     with st.container(border=True):
         st.markdown("#### 1️⃣ API Activation")
-        api_key = st.text_input("OpenAI API Key", type="password")
+
+        # ✅ 먼저 Secrets/환경변수에서 키를 읽음
+        server_key = (st.secrets.get("OPENAI_API_KEY", None) if hasattr(st, "secrets") else None) or os.getenv("OPENAI_API_KEY")
+
+        # (선택) 운영 모드면 입력칸 숨겨도 됨
+        api_key_input = st.text_input("OpenAI API Key (optional)", type="password").strip()
+
+        api_key = api_key_input or server_key
+
         if api_key:
             os.environ["OPENAI_API_KEY"] = api_key
-            st.caption("✅ Active")
+            st.caption("✅ Active (server key)")
         else:
             st.caption("🔴 Locked")
 
