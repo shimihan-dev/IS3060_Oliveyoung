@@ -1,0 +1,5 @@
+streamlit
+pydantic
+pydantic-ai
+openai
+httpx

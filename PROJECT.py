@@ -2,9 +2,20 @@ import os
 import asyncio
 import streamlit as st
 import streamlit.components.v1 as components
-from pydantic_ai import Agent
+
+# ✅ NEW: pydantic_ai가 없을 때 Streamlit Cloud에서 안내 메시지
+try:
+    from pydantic_ai import Agent
+except ModuleNotFoundError:
+    st.error(
+        "Missing dependency: pydantic_ai\n\n"
+        "Streamlit Cloud에서는 requirements.txt에 `pydantic-ai`를 추가해야 합니다."
+    )
+    st.stop()
+
 from pydantic import BaseModel, Field
 from typing import List, Literal, Optional
+
 
 # ==============================================================================
 # PAGE CONFIG
@@ -61,7 +72,7 @@ def get_product_payload(product_id: str):
 
     if product_id == "1":
         productData = {
-            "name": "Olive Young Dokdo Toner",
+            "name": "Round Lab 1025 Dokdo Toner 500 ml Special Set",
             "image_url": "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/10/0000/0013/A00000013718040ko.jpg?l=ko&QT=85&SF=webp&sharpen=1x0.5",
             "description": "A gentle hydrating toner for dry and sensitive skin.",
             "price": 27000
@@ -82,6 +93,19 @@ def get_product_payload(product_id: str):
             "I have sensitive skin, so if it doesn't fit, my skin will turn upside down. This is good because it's gentle. It moisturizes well, so I've been buying and using it well.",
             "It's a cream that soothes irritated skin well. I use it after using a peeling product, and it helps a lot with soothing.",
             "The cream has a light texture that absorbs quickly into the skin without leaving a greasy residue. It provides long-lasting hydration, making my skin feel soft and supple throughout the day.",
+            "It's light on application and has almost no white cast, so it's good for daily use. It absorbs quickly without stickiness, so there's no pushiness even if you apply it before makeup, and it's comfortable even after outdoor activities. It has enough UV protection, so I'm using it with confidence even in the summer. It's sensitive skin, and it fits well without any trouble."
+        ]
+    elif product_id == "3":
+        productData = {
+            "name": "[Manggom Collaboration] Aviv Eoseongcho Teka Capsule Serum Calming Drop 50 ml Double Plan (+Luggage Tag)",
+            "image_url": "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/10/0000/0024/A00000024567211ko.jpg?l=ko&QT=85&SF=webp&sharpen=1x0.5",
+            "description": "Trouble soothing capsules that help with excessive oil and sebum care help to effectively soothe the skin without irritation.",
+            "price": 29800
+        }
+        reviews = [
+            "It's a serum I've been using very well, but I heard that there was a collaboration between Manggom and I already had it, so I bought it additionally! This is a really good serum for acne control, but it's very moist, so I've been using this one most of the time these days!",
+            "The texture is light and fresh, so it absorbs quickly into the skin.",
+            "The more you use it, the more comfortable your skin is, and it fits well for soothing before getting any trouble. It's not sticky, so it's good for layering with other base products.",
             "It's light on application and has almost no white cast, so it's good for daily use. It absorbs quickly without stickiness, so there's no pushiness even if you apply it before makeup, and it's comfortable even after outdoor activities. It has enough UV protection, so I'm using it with confidence even in the summer. It's sensitive skin, and it fits well without any trouble."
         ]
     else:
@@ -133,8 +157,8 @@ with left:
         st.markdown("#### 🏷️ Product Selector (Demo)")
         pid = st.selectbox(
             "product_id",
-            options=["1", "2", "3"],
-            index=(["1", "2", "3"].index(query_pid) if query_pid in ["1","2","3"] else 0),
+            options=["1", "2", "3", "4"],
+            index=(["1", "2", "3", "4"].index(query_pid) if query_pid in ["1","2","3","4"] else 0),
         )
 
         if pid != query_pid:
